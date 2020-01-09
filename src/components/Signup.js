@@ -53,39 +53,47 @@ class Signup extends Component {
           <div className="columns">
             <div class="column"></div>
             <div className="column is-half">
-              <input
-                type="text"
-                name="username"
-                className="input"
-                placeholder="Username"
-                onChange={this.handleChanges}
-              />
-              <input
-                type="text"
-                name="password"
-                className="input"
-                placeholder="Password"
-                onChange={this.handleChanges}
-              />
+              <div className={"box"}>
+                <h1 className={"title has-text-info"}>Sign up</h1>
+                <input
+                  type="text"
+                  name="username"
+                  className="input has-margin-bottom-10"
+                  placeholder="Username"
+                  onChange={this.handleChanges}
+                />
+                <input
+                  type="text"
+                  name="password"
+                  className="input has-margin-bottom-10"
+                  placeholder="Password"
+                  onChange={this.handleChanges}
+                />
 
-              <input
-                type="text"
-                name="confirmPassword"
-                className="input"
-                placeholder="Confirm Password"
-                onChange={this.handleChanges}
-              />
-              <div className="level">
-                <div className="level-left">
-                  <button className="button">Already a user?</button>
-                </div>
-                <div className="level-right">
-                  <button
-                    className="button is-primary"
-                    onClick={this.handleSignUpClicked}
-                  >
-                    Sign Up
-                  </button>
+                <input
+                  type="text"
+                  name="confirmPassword"
+                  className="input has-margin-bottom-10"
+                  placeholder="Confirm Password"
+                  onChange={this.handleChanges}
+                />
+                <div className="level has-margin-bottom-10">
+                  <div className="level-left">
+                    <button
+                      className="button"
+                      onClick={() => window.location.replace("/login")}
+                    >
+                      Already a user?
+                    </button>
+                  </div>
+                  <div className="level-right">
+                    <button
+                      className="button is-primary"
+                      onClick={this.handleSignUpClicked}
+                    >
+                      Sign Up
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

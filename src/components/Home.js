@@ -2,7 +2,6 @@ import React, { Component, useImperativeHandle } from "react";
 import Calendar from "react-calendar";
 import "./helpers";
 import { getUserFromLocalStorage } from "./helpers";
-import { useHistory } from "react-router-dom";
 import Events from "./Events";
 class Home extends Component {
   onDateChanged = date => {
@@ -24,7 +23,7 @@ class Home extends Component {
   render() {
     return (
       <div className="container">
-        <header className="soft-shadows navbar">
+        <header className=" navbar">
           <div className="navbar-brand">
             <h1 className="navbar-item title is-4 has-text-primary">
               Calendar Events App
@@ -32,7 +31,7 @@ class Home extends Component {
           </div>
           <div className={"navbar-end"}>
             <div className={"navbar-item"}>
-              <div class="dropdown is-active">
+              <div class="dropdown">
                 <div class="dropdown-trigger">
                   <button
                     class="button"
@@ -47,9 +46,9 @@ class Home extends Component {
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu3" role="menu">
                   <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">
+                    {/* <Link href="#" class="dropdown-item">
                       Log Out
-                    </a>
+                    </L> */}
                   </div>
                 </div>
               </div>

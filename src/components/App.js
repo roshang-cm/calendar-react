@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "@fortawesome/fontawesome-free/css/all.css";
 import "bulma";
 import "bulma-helpers/css/bulma-helpers.min.css";
 import "../App.sass";

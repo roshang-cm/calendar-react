@@ -3,14 +3,48 @@ import React, { Component } from "react";
 class EventListItem extends Component {
   render() {
     return (
-      <div className={"card has-margin-bottom-20"}>
-        <div className={"card-header"}>
-          <span className={"card-header-title"}>{this.props.title}</span>
+      <article class="message">
+        <div className={`message-header`}>
+          <p className={`${this.props.event.completed ? "is-striked" : ""}`}>
+            {this.props.event.title}
+          </p>
+          <div className={"level"}>
+            <span
+              class="icon has-text-danger has-margin-right-10 icon-button"
+              onClick={() => this.props.onDeleteClicked(this.props.event)}
+            >
+              <i class="fas fa-trash"></i>
+            </span>
+            <span
+              class="icon has-text-white has-margin-right-10 icon-button"
+              onClick={() => this.props.onEditClicked(this.props.event)}
+            >
+              <i class="fas fa-edit"></i>
+            </span>
+            {this.props.event.completed ? (
+              ""
+            ) : (
+              <button
+                class="button is-small is-success is-rounded"
+                aria-label="delete"
+                onClick={() =>
+                  this.props.onMarkAsCompleteClicked(this.props.event)
+                }
+              >
+                Mark as completed
+              </button>
+            )}
+          </div>
         </div>
-        <div className={"card-content"}>
-          <span className="content">{this.props.description}</span>
+        <div
+          className={`message-body ${
+            this.props.event.completed ? "is-striked" : ""
+          }
+          `}
+        >
+          {this.props.event.description}
         </div>
-      </div>
+      </article>
     );
   }
 }

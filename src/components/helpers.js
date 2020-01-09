@@ -21,8 +21,43 @@ export const getEventsForUser = (user_id, onSuccess, onError) => {
       onError(err);
     });
 };
-
-export const addEventForUser = (
+export const performDeleteEventRequest = (event_id, onSuccess, onError) => {
+  axios
+    .post("http://localhost:4000/delete-event", {
+      event_id: event_id
+    })
+    .then(result => {
+      if (onSuccess) onSuccess(result);
+    })
+    .catch(err => {
+      if (onError) onError(err);
+    });
+};
+export const performEditEventRequest = (
+  event_id,
+  date,
+  title,
+  description,
+  completed,
+  onSuccess,
+  onError
+) => {
+  axios
+    .post("http://localhost:4000/update-event", {
+      event_id: event_id,
+      date: moment(date).format("YYYY-MM-DD HH:mm:ss"),
+      title: title,
+      description: description,
+      completed: completed
+    })
+    .then(result => {
+      if (onSuccess) onSuccess(result);
+    })
+    .catch(err => {
+      if (onError) onError(err);
+    });
+};
+export const performAddEventRequest = (
   user_id,
   date,
   title,

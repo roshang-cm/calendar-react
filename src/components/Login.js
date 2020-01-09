@@ -45,33 +45,41 @@ class Login extends Component {
           <div className="columns">
             <div class="column"></div>
             <div className="column is-half">
-              <input
-                type="text"
-                name="username"
-                className="input"
-                placeholder="Username"
-                onChange={this.handleChanges}
-              />
-              <input
-                type="text"
-                name="password"
-                className="input"
-                placeholder="Password"
-                onChange={this.handleChanges}
-              />
-              <div className="level">
-                <div className="level-left">
-                  <button className="button">New User?</button>
-                </div>
-                <div className="level-right">
-                  <button
-                    className={`button is-primary ${
-                      this.state.loading ? "is-loading" : ""
-                    }`}
-                    onClick={this.handleSubmitClicked}
-                  >
-                    Submit
-                  </button>
+              <div className={"box"}>
+                <h1 className={"title has-text-info"}>Login</h1>
+                <input
+                  type="text"
+                  name="username"
+                  className="input has-margin-bottom-10"
+                  placeholder="Username"
+                  onChange={this.handleChanges}
+                />
+                <input
+                  type="text"
+                  name="password"
+                  className="input has-margin-bottom-10"
+                  placeholder="Password"
+                  onChange={this.handleChanges}
+                />
+                <div className="level">
+                  <div className="level-left">
+                    <button
+                      className="button"
+                      onClick={() => window.location.replace("/signup")}
+                    >
+                      New User?
+                    </button>
+                  </div>
+                  <div className="level-right">
+                    <button
+                      className={`button is-primary ${
+                        this.state.loading ? "is-loading" : ""
+                      }`}
+                      onClick={this.handleSubmitClicked}
+                    >
+                      Submit
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

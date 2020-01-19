@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import {
-  getEventsForUser,
+  getEvents,
   performAddEventRequest,
   filterEventsByDate,
   performEditEventRequest,
   performDeleteEventRequest
-} from "./helpers";
+} from "../methods";
 import EditableEventListItem from "./EditableEventListItem";
 import EventListItem from "./EventListItem";
 import moment from "moment";
@@ -19,7 +19,7 @@ class Events extends Component {
   };
 
   updateFetchedData = () => {
-    getEventsForUser(this.state.user.id, result => {
+    getEvents(this.state.user.id, result => {
       this.setState({
         events: filterEventsByDate(this.props.date, result),
         showEditable: false
@@ -34,7 +34,7 @@ class Events extends Component {
   addEvent = changes => {
     console.log(changes);
     performAddEventRequest(
-      this.state.user.id,
+      this.state.user.jwt,
       this.props.date,
       changes.title,
       changes.description,
@@ -121,7 +121,13 @@ class Events extends Component {
             ""
           ) : (
             <button
-              className={"button is-success"}
+              className={`button is-success`}
+              disabled={!this.state.user.write}
+              title={
+                this.state.user.write
+                  ? "Add a new event"
+                  : "You do not have the permission to add events"
+              }
               onClick={this.handleAddEventButtonClicked}
             >
               Add new event

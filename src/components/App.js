@@ -7,13 +7,34 @@ import { BrowserRouter, Route } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";
 import Signup from "./Signup";
+import { PrivateRoute } from "./PrivateRoute";
+import Admin from "./Admin";
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      authenticated: false
+    };
+  }
+  componentWillMount = () => {
+    this.setState({
+      authenticated: localStorage.getItem("user") ? true : false
+    });
+  };
   render() {
     return (
       <BrowserRouter>
-        <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
+        <PrivateRoute
+          exact
+          path="/"
+          component={Home}
+          authenticated={() => {
+            return localStorage.getItem("user") ? true : false;
+          }}
+        />
+        <Route path="/admin" component={Admin} />
       </BrowserRouter>
     );
   }

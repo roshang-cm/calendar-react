@@ -1,9 +1,12 @@
 import React, { Component, useImperativeHandle } from "react";
 import Calendar from "react-calendar";
-import "./helpers";
-import { getUserFromLocalStorage } from "./helpers";
+import { getUserFromLocalStorage } from "../helpers";
 import Events from "./Events";
+import { Link } from "react-router-dom";
 class Home extends Component {
+  state = {
+    dropDownCollapse: false
+  };
   onDateChanged = date => {
     console.log(date);
     this.setState({
@@ -11,6 +14,8 @@ class Home extends Component {
     });
   };
   componentWillMount = () => {
+    console.log("Entered HomePage");
+    console.log(getUserFromLocalStorage());
     if (getUserFromLocalStorage()) {
       this.setState({
         date: new Date(),
@@ -25,15 +30,32 @@ class Home extends Component {
       <div className="container">
         <header className=" navbar">
           <div className="navbar-brand">
-            <h1 className="navbar-item title is-4 has-text-primary">
+            <h1 className="navbar-item title is-4 has-text-primary has-margin-left-10">
               Calendar Events App
             </h1>
           </div>
           <div className={"navbar-end"}>
             <div className={"navbar-item"}>
-              <div class="dropdown">
+              <span
+                class="tag is-dark has-margin-right-20"
+                title={`Can${this.state.user.read ? "" : "not"} read, Can${
+                  this.state.user.write ? "" : "not"
+                } write, Can${this.state.user.delete ? "" : "not"} delete. `}
+              >
+                {this.state.user.role_name}
+              </span>
+              <div
+                className={`dropdown ${
+                  this.state.dropDownCollapse ? "is-active" : ""
+                }`}
+              >
                 <div class="dropdown-trigger">
                   <button
+                    onClick={() =>
+                      this.setState({
+                        dropDownCollapse: !this.state.dropDownCollapse
+                      })
+                    }
                     class="button"
                     aria-haspopup="true"
                     aria-controls="dropdown-menu3"
@@ -44,11 +66,22 @@ class Home extends Component {
                     </span>
                   </button>
                 </div>
-                <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                <div
+                  className={`dropdown-menu`}
+                  id="dropdown-menu3"
+                  role="menu"
+                >
                   <div class="dropdown-content">
-                    {/* <Link href="#" class="dropdown-item">
+                    <a
+                      onClick={() => {
+                        localStorage.clear();
+                        window.location.replace("/");
+                      }}
+                      href="#"
+                      class="dropdown-item"
+                    >
                       Log Out
-                    </L> */}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -63,6 +96,10 @@ class Home extends Component {
                   value={this.state.date}
                   onChange={this.onDateChanged}
                 />
+                <div className={"box has-margin-top-20"}>
+                  <h2 className={"is-4"}>Weekly progress</h2>
+                  <hr />
+                </div>
               </div>
             </div>
             <div className={"column"}>

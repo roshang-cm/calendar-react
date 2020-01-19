@@ -1,26 +1,27 @@
 import React, { Component } from "react";
-// const axios = require("axios");
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 class Login extends Component {
   state = {
     username: "",
     password: "",
-    loading: false
+    loading: false,
+    redirectToHome: false
   };
   performLogin = () => {
-    this.setState({ loading: true });
-    // fetch(')
+    this.setState({ redirectToHome: false, loading: true });
     axios
       .get("http://localhost:4000/login", {
         params: {
           username: this.state.username,
-          password_hash: this.state.password
+          password: this.state.password
         }
       })
       .then(result => {
-        this.setState({ loading: false });
         localStorage.setItem("user", JSON.stringify(result.data));
-        window.location.replace("/");
+        console.log("Login successful");
+        this.setState({ loading: false, redirectToHome: false });
+        this.props.history.push("/");
       })
       .catch(err => {
         this.setState({ loading: false });
@@ -39,6 +40,9 @@ class Login extends Component {
     this.performLogin();
   };
   render() {
+    if (this.state.redirectToHome === true) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
         <div className="container">
@@ -55,7 +59,7 @@ class Login extends Component {
                   onChange={this.handleChanges}
                 />
                 <input
-                  type="text"
+                  type="password"
                   name="password"
                   className="input has-margin-bottom-10"
                   placeholder="Password"

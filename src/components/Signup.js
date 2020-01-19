@@ -33,7 +33,7 @@ class Signup extends Component {
     axios
       .post("http://localhost:4000/signup", {
         username: this.state.username,
-        password_hash: this.state.password
+        password: this.state.password
       })
       .then(result => {
         console.log(result);
@@ -63,7 +63,7 @@ class Signup extends Component {
                   onChange={this.handleChanges}
                 />
                 <input
-                  type="text"
+                  type="password"
                   name="password"
                   className="input has-margin-bottom-10"
                   placeholder="Password"
@@ -71,7 +71,7 @@ class Signup extends Component {
                 />
 
                 <input
-                  type="text"
+                  type="password"
                   name="confirmPassword"
                   className="input has-margin-bottom-10"
                   placeholder="Confirm Password"

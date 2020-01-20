@@ -43,6 +43,20 @@ class Home extends Component {
               >
                 {this.state.user.role_name}
               </span>
+              {this.state.user.read &&
+              this.state.user.write &&
+              this.state.user.delete ? (
+                <button
+                  onClick={() => {
+                    this.props.history.push("/admin");
+                  }}
+                  className={"button is-info is-light has-margin-right-10"}
+                >
+                  Admin Panel
+                </button>
+              ) : (
+                ""
+              )}
               <div
                 className={`dropdown ${
                   this.state.dropDownCollapse ? "is-active" : ""

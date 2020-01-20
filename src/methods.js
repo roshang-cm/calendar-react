@@ -176,6 +176,22 @@ function getAllEvents(jwt) {
   });
 }
 
+function getAllRoles(jwt) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("http://localhost:4000/all-roles", {
+        headers: {
+          authorization: `Bearer ${jwt}`
+        }
+      })
+      .then(result => {
+        resolve(result.data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
 function getAllUsers(jwt) {
   return new Promise((resolve, reject) => {
     axios
@@ -197,6 +213,7 @@ export const api = {
   getEvents,
   getAllEvents,
   getAllUsers,
+  getAllRoles,
   addEvent,
   deleteEvent,
   editEvent

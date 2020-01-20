@@ -17,6 +17,7 @@ class Admin extends Component {
       data: [],
       userData: [],
       users: [],
+      roles: [],
       selectedUser: null,
       toggleDropdown: false,
       user: JSON.parse(localStorage.getItem("user"))
@@ -27,14 +28,18 @@ class Admin extends Component {
     this.setState({
       users: usersListResult
     });
+
     let eventsListResult = await api.getAllEvents(this.state.user.jwt);
     let data = createGraphDataForEvents(
       moment({ year: 1970 }),
       moment({ year: 2099 }),
       eventsListResult
     );
+    let rolesListResult = await api.getAllRoles(this.state.user.jwt);
+
     this.setState({
-      data: data
+      data: data,
+      roles: rolesListResult
     });
   };
 
@@ -51,11 +56,24 @@ class Admin extends Component {
     return (
       <div className={"box"}>
         <span className={"is-4"}>
-          Manage User <b>{this.state.selectedUser.username}</b>
+          Manage User <b>{this.state.selectedUser.username} - (TODO)</b>
         </span>
 
         <hr />
         <span>Update account type:</span>
+        {this.state.roles.map(role => {
+          return (
+            <div>
+              <input
+                type="radio"
+                name="roles"
+                value={role.id}
+                checked={role.id === 1}
+              />
+              <span> {role.role_name}</span>
+            </div>
+          );
+        })}
       </div>
     );
   }

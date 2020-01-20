@@ -1,40 +1,67 @@
 import React, { Component } from "react";
 import {
-  getAllEvents,
+  api,
   createGraphDataForEvents,
-  getAllUsers
-} from "../helpers";
+  getAllUsers,
+  getUserFromLocalStorage,
+  filterEventsByDate
+} from "../methods";
 import moment from "moment";
 import { LineChart, XAxis, YAxis, Tooltip, Legend, Line } from "recharts";
 
 class Admin extends Component {
-  state = {
-    data: [],
-    userData: [],
-    users: [],
-    selectedUser: null,
-    toggleDropdown: false
-  };
-  componentDidMount = () => {
-    getAllUsers(users => {
-      this.setState({
-        users: users
-      });
+  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      userData: [],
+      users: [],
+      selectedUser: null,
+      toggleDropdown: false,
+      user: JSON.parse(localStorage.getItem("user"))
+    };
+  }
+  componentDidMount = async () => {
+    let usersListResult = await api.getAllUsers(this.state.user.jwt);
+    this.setState({
+      users: usersListResult
     });
-    getAllEvents(result => {
-      let data = createGraphDataForEvents(
-        moment({ year: 1970 }),
-        moment({ year: 2099 }),
-        result
-      );
-      this.setState({
-        data: data
-      });
+    let eventsListResult = await api.getAllEvents(this.state.user.jwt);
+    let data = createGraphDataForEvents(
+      moment({ year: 1970 }),
+      moment({ year: 2099 }),
+      eventsListResult
+    );
+    this.setState({
+      data: data
     });
   };
+
+  renderManageUserSectionEmpty() {
+    return (
+      <div className={"box"}>
+        <div className={"container"}>
+          <i>No user selected. Select a user to manage their account.</i>
+        </div>
+      </div>
+    );
+  }
+  renderManageUserSection() {
+    return (
+      <div className={"box"}>
+        <span className={"is-4"}>
+          Manage User <b>{this.state.selectedUser.username}</b>
+        </span>
+
+        <hr />
+        <span>Update account type:</span>
+      </div>
+    );
+  }
   render() {
     if (this.state.selectedUser)
-      getAllEvents(
+      api.getAllEvents(
         result => {
           let data = createGraphDataForEvents(
             moment({ year: 1970 }),
@@ -72,22 +99,9 @@ class Admin extends Component {
           </div>
           <div className={"columns"}>
             <div className={"column is-two-thirds"}>
-              <div className={"box"}>
-                <span className={"is-4"}>Weekly use by user</span>
-
-                <hr />
-                <LineChart width={600} height={200} data={this.state.userData}>
-                  <XAxis dataKey={"date"}></XAxis>
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#49a8e3"
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </div>
+              {this.state.selectedUser
+                ? this.renderManageUserSection()
+                : this.renderManageUserSectionEmpty()}
             </div>
 
             <div className={"column "}>

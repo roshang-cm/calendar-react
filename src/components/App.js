@@ -30,11 +30,26 @@ class App extends Component {
           exact
           path="/"
           component={Home}
+          fallbackRoute={"/login"}
           authenticated={() => {
             return localStorage.getItem("user") ? true : false;
           }}
         />
-        <Route path="/admin" component={Admin} />
+        <PrivateRoute
+          path="/admin"
+          component={Admin}
+          fallbackRoute={"/"}
+          authenticated={() => {
+            let user = localStorage.getItem("user");
+            if (user) {
+              user = JSON.parse(user);
+              if (user.read && user.write && user.delete) {
+                return true;
+              }
+            }
+            return false;
+          }}
+        />
       </BrowserRouter>
     );
   }

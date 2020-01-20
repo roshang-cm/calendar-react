@@ -5,6 +5,7 @@ import { Route, Redirect } from "react-router-dom";
 export const PrivateRoute = ({
   component: Component,
   authenticated,
+  fallbackRoute,
   ...rest
 }) => {
   return (
@@ -15,7 +16,7 @@ export const PrivateRoute = ({
           <Component {...props} />
         ) : (
           <Redirect
-            to={{ pathname: "/login", state: { from: props.location } }}
+            to={{ pathname: fallbackRoute, state: { from: props.location } }}
           />
         )
       }

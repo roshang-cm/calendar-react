@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-  getEvents,
-  performAddEventRequest,
-  filterEventsByDate,
-  performEditEventRequest,
-  performDeleteEventRequest
-} from "../methods";
+import { api, filterEventsByDate } from "../methods";
 import EditableEventListItem from "./EditableEventListItem";
 import EventListItem from "./EventListItem";
 import moment from "moment";
@@ -18,12 +12,11 @@ class Events extends Component {
     currentEvent: null
   };
 
-  updateFetchedData = () => {
-    getEvents(this.state.user.id, result => {
-      this.setState({
-        events: filterEventsByDate(this.props.date, result),
-        showEditable: false
-      });
+  updateFetchedData = async () => {
+    let result = await api.getAllEvents(this.state.user.jwt);
+    this.setState({
+      events: filterEventsByDate(this.props.date, result),
+      showEditable: false
     });
   };
   constructor(props) {
@@ -31,48 +24,33 @@ class Events extends Component {
     this.updateFetchedData();
   }
 
-  addEvent = changes => {
-    console.log(changes);
-    performAddEventRequest(
+  addEvent = async changes => {
+    let result = await api.addEvent(
       this.state.user.jwt,
       this.props.date,
       changes.title,
       changes.description,
-      changes.completed,
-      () => {
-        this.updateFetchedData();
-      }
+      changes.completed
     );
+    this.updateFetchedData();
   };
 
-  deleteEvent = event => {
-    performDeleteEventRequest(
-      event.id,
-      () => {
-        this.updateFetchedData();
-      },
-      err => {
-        console.error(err);
-      }
-    );
+  deleteEvent = async event => {
+    let result = await api.deleteEvent(this.state.user.jwt, event.id);
+    this.updateFetchedData();
   };
 
-  editEvent = changes => {
+  editEvent = async changes => {
     console.log(changes);
-    performEditEventRequest(
+    let result = await api.editEvent(
+      this.state.user.jwt,
       changes.id,
       changes.date,
       changes.title,
       changes.description,
-      changes.completed,
-      result => {
-        console.info("EDIT SUCCESS", result);
-        this.updateFetchedData();
-      },
-      error => {
-        console.error("EDIT FAILED", error);
-      }
+      changes.completed
     );
+    this.updateFetchedData();
   };
   handleEditEventClicked = event => {
     this.setState({
@@ -87,23 +65,18 @@ class Events extends Component {
     });
   };
 
-  markEventAsComplete = event => {
+  markEventAsComplete = async event => {
     let changes = event;
     changes.completed = true;
-    performEditEventRequest(
+    let result = await api.editEvent(
+      this.state.user.jwt,
       changes.id,
       changes.date,
       changes.title,
       changes.description,
-      changes.completed,
-      result => {
-        console.info("EDIT SUCCESS", result);
-        this.updateFetchedData();
-      },
-      error => {
-        console.error("EDIT FAILED", error);
-      }
+      changes.completed
     );
+    this.updateFetchedData();
   };
   render() {
     return (

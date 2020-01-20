@@ -1,89 +1,26 @@
 const axios = require("axios");
 const moment = require("moment");
+
+//LocalStorage functions
+
+/**
+ * Returns the user object from localStorage if exists, otherwise null.
+ *
+ */
 export const getUserFromLocalStorage = () => {
   return localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
 };
 
-export const getEvents = (jwt, onSuccess, onError) => {
-  axios
-    .get("http://localhost:4000/events", {
-      headers: {
-        authorization: `Bearer ${jwt}`
-      }
-    })
-    .then(result => {
-      onSuccess(result.data);
-    })
-    .catch(err => {
-      console.error(err);
-      if (onError) onError(err);
-    });
-};
-export const performDeleteEventRequest = (event_id, onSuccess, onError) => {
-  axios
-    .post("http://localhost:4000/delete-event", {
-      event_id: event_id
-    })
-    .then(result => {
-      if (onSuccess) onSuccess(result);
-    })
-    .catch(err => {
-      if (onError) onError(err);
-    });
-};
-export const performEditEventRequest = (
-  event_id,
-  date,
-  title,
-  description,
-  completed,
-  onSuccess,
-  onError
-) => {
-  axios
-    .post("http://localhost:4000/update-event", {
-      event_id: event_id,
-      date: moment(date).format("YYYY-MM-DD HH:mm:ss"),
-      title: title,
-      description: description,
-      completed: completed
-    })
-    .then(result => {
-      if (onSuccess) onSuccess(result);
-    })
-    .catch(err => {
-      if (onError) onError(err);
-    });
-};
-export const performAddEventRequest = (
-  jwt,
-  date,
-  title,
-  description,
-  completed,
-  onSuccess,
-  onError
-) => {
-  axios
-    .post("http://localhost:4000/events", {
-      headers: {
-        authorization: `Bearer ${jwt}`
-      },
-      date: moment(date).format("YYYY-MM-DD HH:mm:ss"),
-      title: title,
-      description: description,
-      completed: completed
-    })
-    .then(result => {
-      if (onSuccess) onSuccess(result);
-    })
-    .catch(err => {
-      if (onError) onError(err);
-    });
-};
+//Filtering and Data Processing
 
+/**
+ *
+ * @param {Date | moment} date
+ * @param {object[]} eventsList
+ * @returns {object[]}
+ */
 export const filterEventsByDate = (date, eventsList) => {
   date = moment(date);
   let newEventsList = [];
@@ -95,6 +32,14 @@ export const filterEventsByDate = (date, eventsList) => {
   return newEventsList;
 };
 
+/**
+ *
+ * Creates graph data in list form, from eventList
+ * @param {Date | moment} from
+ * @param {Date | moment} to
+ * @param {object[]} events
+ * @param {number} user_id
+ */
 export const createGraphDataForEvents = (from, to, events, user_id) => {
   from = moment(from);
   to = moment(to);
@@ -127,26 +72,132 @@ export const createGraphDataForEvents = (from, to, events, user_id) => {
   return newList;
 };
 
-export const getAllEvents = (onSuccess, onError) => {
-  axios
-    .post("http://localhost:4000/all-events")
-    .then(result => {
-      console.log(result);
-      onSuccess(result.data);
-    })
-    .catch(err => {
-      console.log(err);
-      onError(err);
-    });
-};
+// Axios API handling methods (under api namespace)
 
-export const getAllUsers = (onSuccess, onError) => {
-  axios
-    .post("http://localhost:4000/all-users")
-    .then(result => {
-      onSuccess(result.data);
-    })
-    .catch(err => {
-      onError(err);
-    });
+function getEvents(jwt) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get("http://localhost:4000/events", {
+        headers: {
+          authorization: `Bearer ${jwt}`
+        }
+      })
+      .then(result => resolve(result.data))
+      .catch(err => reject(err));
+  });
+}
+
+function deleteEvent(jwt, event_id) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "http://localhost:4000/delete-event",
+        {
+          event_id: event_id
+        },
+        {
+          headers: {
+            authorization: `Bearer ${jwt}`
+          }
+        }
+      )
+      .then(result => resolve(result.data))
+      .catch(err => reject(err));
+  });
+}
+
+function editEvent(jwt, event_id, date, title, description, completed) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "http://localhost:4000/update-event",
+        {
+          event_id: event_id,
+          date: moment(date).format("YYYY-MM-DD HH:mm:ss"),
+          title: title,
+          description: description,
+          completed: completed
+        },
+        {
+          headers: {
+            authorization: `Bearer ${jwt}`
+          }
+        }
+      )
+      .then(result => {
+        resolve(result.data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+function addEvent(jwt, date, title, description, completed) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "http://localhost:4000/events",
+
+        {
+          date: moment(date).format("YYYY-MM-DD HH:mm:ss"),
+          title: title,
+          description: description,
+          completed: completed
+        },
+        {
+          headers: {
+            authorization: `Bearer ${jwt}`
+          }
+        }
+      )
+      .then(result => {
+        resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+
+function getAllEvents(jwt) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("http://localhost:4000/all-events", {
+        headers: {
+          authorization: `Bearer ${jwt}`
+        }
+      })
+      .then(result => {
+        resolve(result.data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+
+function getAllUsers(jwt) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("http://localhost:4000/all-users", {
+        headers: {
+          authorization: `Bearer ${jwt}`
+        }
+      })
+      .then(result => {
+        resolve(result.data);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+
+export const api = {
+  getEvents,
+  getAllEvents,
+  getAllUsers,
+  addEvent,
+  deleteEvent,
+  editEvent
 };

@@ -1,8 +1,7 @@
-import React, { Component, useImperativeHandle } from "react";
+import React, { Component } from "react";
 import Calendar from "react-calendar";
-import { getUserFromLocalStorage } from "../helpers";
+import { getUserFromLocalStorage } from "../methods";
 import Events from "./Events";
-import { Link } from "react-router-dom";
 class Home extends Component {
   state = {
     dropDownCollapse: false

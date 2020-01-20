@@ -19,7 +19,9 @@ class Admin extends Component {
       users: [],
       roles: [],
       selectedUser: null,
+      selectedRoleOption: null,
       toggleDropdown: false,
+      isLoading: false,
       user: JSON.parse(localStorage.getItem("user"))
     };
   }
@@ -43,6 +45,35 @@ class Admin extends Component {
     });
   };
 
+  updateRole = async () => {
+    let adminCount = this.state.users.filter(
+      user => user.read && user.write && user.delete
+    ).length;
+    console.log("No. of admins ", adminCount);
+    if (
+      adminCount < 2 &&
+      this.state.selectedUser.read &&
+      this.state.selectedUser.write &&
+      this.state.selectedUser.delete
+    ) {
+      alert(
+        "There are no other admins. Make sure there is another admin before demoting this admin user."
+      );
+      return;
+    }
+    let result = await api.updateRole(
+      this.state.user.jwt,
+      this.state.selectedUser.id,
+      this.state.selectedRoleOption
+    );
+    let usersListResult = await api.getAllUsers(this.state.user.jwt);
+    this.setState({
+      users: usersListResult,
+      selectedUser: null,
+      selectedRoleOption: null
+    });
+  };
+
   renderManageUserSectionEmpty() {
     return (
       <div className={"box"}>
@@ -56,7 +87,7 @@ class Admin extends Component {
     return (
       <div className={"box"}>
         <span className={"is-4"}>
-          Manage User <b>{this.state.selectedUser.username} - (TODO)</b>
+          Manage User <b>{this.state.selectedUser.username}</b>
         </span>
 
         <hr />
@@ -65,15 +96,29 @@ class Admin extends Component {
           return (
             <div>
               <input
+                key={role.role_id}
                 type="radio"
                 name="roles"
-                value={role.id}
-                checked={role.id === 1}
+                value={role.role_id}
+                checked={this.state.selectedRoleOption === role.role_id}
+                onChange={() => {
+                  this.setState({
+                    selectedRoleOption: role.role_id
+                  });
+                }}
               />
               <span> {role.role_name}</span>
             </div>
           );
         })}
+        <br />
+        {this.state.selectedRoleOption != this.state.selectedUser.role_id ? (
+          <button className={"button is-primary"} onClick={this.updateRole}>
+            Save Changes
+          </button>
+        ) : (
+          ""
+        )}
       </div>
     );
   }
@@ -161,8 +206,10 @@ class Admin extends Component {
                             onClick={() => {
                               this.setState({
                                 selectedUser: user,
+                                selectedRoleOption: user.role_id,
                                 toggleDropdown: !this.state.toggleDropdown
                               });
+                              console.log(user);
                             }}
                           >
                             {user.username}

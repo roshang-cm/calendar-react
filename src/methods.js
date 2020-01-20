@@ -209,6 +209,26 @@ function getAllUsers(jwt) {
   });
 }
 
+function updateRole(jwt, user_id, role_id) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "http://localhost:4000/update-role",
+        {
+          user_id: user_id,
+          role_id: role_id
+        },
+        {
+          headers: {
+            authorization: `Bearer ${jwt}`
+          }
+        }
+      )
+      .then(result => resolve(result.data))
+      .catch(err => reject(err));
+  });
+}
+
 export const api = {
   getEvents,
   getAllEvents,
@@ -216,5 +236,6 @@ export const api = {
   getAllRoles,
   addEvent,
   deleteEvent,
-  editEvent
+  editEvent,
+  updateRole
 };
